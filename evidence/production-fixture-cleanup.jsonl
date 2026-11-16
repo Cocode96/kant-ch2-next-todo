@@ -1,0 +1,4 @@
+{"time_utc":"2026-11-16T14:43:34.2879010+00:00","event":"cleanup_start","host":"wtreqtufnuloqfusshvj.supabase.co","run_id":"a38427d0296d40229e54c75e00d63abe","scope":"only recorded IDs after remote marker verification"}
+{"time_utc":"2026-11-16T14:43:34.8608750+00:00","event":"cleanup_user","account":"A","status":"PASS"}
+{"time_utc":"2026-11-16T14:43:35.0725760+00:00","event":"cleanup_user","account":"B","status":"PASS"}
+{"time_utc":"2026-11-16T14:43:35.0736330+00:00","event":"cleanup_summary","status":"PASS"}

@@ -1,0 +1,43 @@
+{
+  "evidence_version": 1,
+  "observed_at_utc": "2026-11-16T14:36:43.912Z",
+  "source_tools": [
+    "Vercel get_deployment",
+    "Vercel list_deployment_events (builds=1)"
+  ],
+  "verification_scope": "Deployment metadata and build completion. Browser, signup, authentication and Todo UI checks are separate evidence.",
+  "team_id": "team_pA9kgc0Yi4F1iCw3nFSTZzWz",
+  "project_id": "prj_DqPqVUQLpKvbwiQIAY0jPP0GmHp2",
+  "project_name": "kant-ch2-next-todo",
+  "repository": "Cocode96/kant-ch2-next-todo",
+  "commit_sha": "d2beb9b5eacfa08083664af899cbc366fc65020d",
+  "deployment": {
+    "id": "dpl_3BaMZzTvNpNGAbH3VUQNBmfwQ6tQ",
+    "target": "production",
+    "state": "READY",
+    "ready_state": "READY",
+    "created_at_utc": "2026-11-16T14:33:30.828Z",
+    "ready_at_utc": "2026-11-16T14:34:10.822Z",
+    "production_url": "https://kant-ch2-next-todo.vercel.app",
+    "deployment_url": "https://kant-ch2-next-todo-nqe54ag1p-cocode96-study.vercel.app",
+    "aliases": [
+      "kant-ch2-next-todo.vercel.app",
+      "kant-ch2-next-todo-cocode96-study.vercel.app",
+      "kant-ch2-next-todo-git-d2beb9b5eacfa08083-d6e7e2-cocode96-study.vercel.app"
+    ]
+  },
+  "build": {
+    "status": "PASS",
+    "framework": "Next.js",
+    "framework_version": "16.4.6",
+    "compilation_completed": true,
+    "typescript_completed": true,
+    "deployment_completed": true,
+    "summary_events": [
+      "✓ Compiled successfully in 9.9s",
+      "  Finished TypeScript in 4.6s ...",
+      "Build Completed in /vercel/output [30s]",
+      "Deployment completed"
+    ]
+  }
+}

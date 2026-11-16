@@ -1,0 +1,6 @@
+{"time_utc": "2026-11-16T14:47:04.613993+00:00", "run_id": "5b7729c360a942bbb6363bd76db41e67", "event": "cleanup_start", "host": "wtreqtufnuloqfusshvj.supabase.co", "account": "C", "scope": "one recorded synthetic account"}
+{"time_utc": "2026-11-16T14:47:05.063416+00:00", "run_id": "5b7729c360a942bbb6363bd76db41e67", "event": "identity_verified", "status": "PASS", "id_matches": true, "email_matches": true, "signup_marker_matches": true, "account_marker_matches": true}
+{"time_utc": "2026-11-16T14:47:05.402823+00:00", "run_id": "5b7729c360a942bbb6363bd76db41e67", "event": "todo_absence_verified", "status": "PASS", "remaining_rows": 0}
+{"time_utc": "2026-11-16T14:47:05.666809+00:00", "run_id": "5b7729c360a942bbb6363bd76db41e67", "event": "account_deleted", "status": "PASS", "deleted_account_count": 1}
+{"time_utc": "2026-11-16T14:47:05.922531+00:00", "run_id": "5b7729c360a942bbb6363bd76db41e67", "event": "account_absence_verified", "status": "PASS", "http_status": 404}
+{"time_utc": "2026-11-16T14:47:05.931039+00:00", "run_id": "5b7729c360a942bbb6363bd76db41e67", "event": "summary", "status": "PASS", "deleted_account_count": 1, "todo_rows_before_delete": 0, "account_absent": true}

@@ -1,8 +1,12 @@
 # Next Todo
 
+**실제 서비스:** [https://kant-ch2-next-todo.vercel.app](https://kant-ch2-next-todo.vercel.app)
+
+**과제용 가입 설정:** `Confirm email`을 꺼두어 확인 메일을 사용하지 않는다. 일반 가입 API로 새 계정을 만든 뒤 실제 배포 화면에 로그인하는 것까지 확인했다.
+
 기존 Todo의 입력, 완료 표시, 필터를 Next.js로 구성하고 Supabase 이메일 회원가입/로그인과 회원별 할 일 저장을 연결한 CH2 과제다. 목록에서 추가와 완료 변경, 상세에서 제목 수정과 삭제를 제공한다.
 
-**검증 상태:** 2026-11-16 lint, 타입 검사, 프로덕션 빌드 통과. 실제 Supabase에서 A/B 로그인, 각 회원의 Todo CRUD, 타인 접근과 소유자 위조 차단을 통과했다. 로컬 Next 화면에서도 추가/수정, 새로고침과 재로그인 후 저장 유지, 회원별 목록/상세 분리, 로그아웃 후 접근 제한을 확인했다. 실제 Vercel 접속 URL은 아직 확인되지 않았다.
+**검증 상태:** 2026-11-16 lint, 타입 검사, 프로덕션 빌드 통과. 실제 Supabase에서 A/B 로그인, 각 회원의 Todo CRUD, 타인 접근과 소유자 위조 차단을 통과했다. Vercel production에서 로그인, 조회/등록/수정/삭제, 새로고침 유지, 회원별 목록/상세 분리, 로그아웃 후 접근 제한을 확인했다. 일반 가입 API로 생성한 새 계정 C의 재로그인과 배포 화면 로그인도 확인했다.
 
 ## 실행과 환경변수
 
@@ -22,7 +26,7 @@ npm run dev
 
 두 변수는 브라우저에서 사용하는 공개 연결값이다. service-role/secret 키와 DB 비밀번호를 넣지 않는다. 데이터 접근 제한은 Supabase Auth와 RLS가 담당한다.
 
-로컬 인증 Redirect URL은 `http://localhost:3000/auth/callback`이다. 이메일 확인이 켜져 있으면 가입 후 확인 링크를 열어야 한다. 설정이 없을 때 로그인 화면은 환경 설정 필요 상태를 표시한다.
+로컬 인증 Redirect URL은 `http://localhost:3000/auth/callback`이다. 현재 과제 배포는 이메일 확인을 사용하지 않는다. 다른 환경에서 이메일 확인을 켜면 가입 후 확인 링크를 열어야 한다. 환경변수 설정이 없을 때 로그인 화면은 환경 설정 필요 상태를 표시한다.
 
 ## 라우팅과 컴포넌트 설계
 
@@ -75,7 +79,7 @@ npm run typecheck
 npm run build
 ```
 
-세 명령은 2026-11-16 실제로 통과했다. 로컬 PGlite에서는 다른 사용자의 행 조회/수정/삭제 차단, 소유자 위조 차단, 익명 접근 차단을 확인했다. 이어서 실제 Supabase Auth/API와 로컬 Next 화면에서 다음 결과를 확인했다.
+세 명령은 2026-11-16 실제로 통과했다. 로컬 PGlite에서는 다른 사용자의 행 조회/수정/삭제 차단, 소유자 위조 차단, 익명 접근 차단을 확인했다. 이어서 실제 Supabase Auth/API, 로컬 Next 화면, Vercel production에서 다음 결과를 확인했다.
 
 | 확인 환경 | 동작 | 결과 |
 | --- | --- | --- |
@@ -87,11 +91,15 @@ npm run build
 | 로컬 Next + 실제 Supabase | A 로그인, 할 일 추가, 상세에서 제목/완료 수정, 새로고침 | 저장된 제목과 완료 상태 유지 확인 |
 | 로컬 Next 화면 | B 로그인 후 A 목록/상세 접근 차단, B 본인 항목 등록 | A 항목은 보이지 않고 B 항목 1건만 표시, A 상세 직접 접근 시 거부 안내 |
 | 로컬 Next 화면 | A 재로그인, 로그아웃 후 A 상세 직접 접근 | A의 완료 항목 1건만 유지, 비로그인 상세 접근은 `/login`으로 이동 |
-| 로컬 Next 화면 | 본인 항목의 삭제 버튼 조작 | UI 삭제는 미확인. 위 실제 API 삭제 검증과 구분 |
-| 앱 회원가입과 확인 이메일 | 가입 화면부터 이메일 수신/링크 확인까지 | 별도 검증 필요 |
-| 실제 Vercel 주소 | 위 사용자 흐름 재확인 | 배포 주소 미확인 |
+| Vercel production | A/B 본인 항목의 삭제 버튼 조작 | 각각 1건 삭제 확인. A는 신규 항목 1건만 남고 B는 빈 목록 표시 |
+| Supabase 일반 가입 API | 공개 키의 `sign_up`으로 C 생성, local 로그아웃 후 비밀번호 재로그인 | 새 사용자/세션/확인 상태, `get_user`, C 본인 Todo CRUD와 행 정리 통과 |
+| Vercel production | 일반 가입으로 생성한 C의 로그인 | 정상 로그인 후 본인의 빈 목록 표시, 로그아웃 확인 |
+| 가입 폼 UI | 새 이메일/비밀번호 입력부터 가입 버튼 클릭까지의 전체 시연 | 미검증. 일반 가입 API와 생성된 계정의 배포 로그인까지 검증 |
+| 확인 이메일 | 과제용 `Confirm email=off` | 확인 메일과 링크 절차 미사용 |
+| Vercel production | 실제 주소 접속, A 로그인과 기존 항목 조회, 신규 등록, 수정 후 새로고침 | 모두 확인. A 항목 2건과 수정한 제목/완료 상태 표시 |
+| Vercel production | B 로그인과 목록 분리, A 상세 직접 접근, 비로그인 상세 접근 | B 본인 항목 1건만 표시, 타인 상세 거부, 로그아웃 후 `/login` 이동 |
 
-API 검증과 로컬 Next 화면은 **publishable key + 사용자 로그인 세션**을 사용했다. 서버용 secret 키는 합성 A/B 실습 계정을 준비하는 데만 사용했다. 두 계정은 관리자 API에서 이메일 확인 상태를 지정한 계정이므로, 해당 계정의 로그인 성공을 앱 회원가입이나 확인 이메일 전달 절차의 성공으로 표시하지 않는다.
+Todo CRUD/RLS 검증과 로컬/배포 화면은 **publishable key + 사용자 로그인 세션**을 사용했다. A/B는 관리자 API로 준비한 실습 계정이고, C는 공개 키의 일반 `auth.sign_up`으로 생성한 계정이다. C 가입에는 관리자 API를 사용하지 않았다. 서버용 secret 키는 A/B 계정 준비와 검증 후 테스트 계정 정리에 사용했으며, 앱 환경변수나 Todo CRUD/RLS 검증에는 사용하지 않았다.
 
 ## 실제 연동 증거
 
@@ -127,8 +135,64 @@ A 로그아웃 후 로그인 화면으로 이동했다. 비로그인 상태에�
 
 ![로그아웃 후 보호된 상세 URL 접근이 로그인 화면으로 이동한 결과](evidence/live-ui-logout-redirect.jpg)
 
-## 배포 주소
+## Vercel 배포와 실제 서비스 검증
 
-현재 확인된 실제 서비스 URL이 없다. GitHub 주소나 localhost 주소를 배포 주소로 대체하지 않는다.
+서비스 주소는 [kant-ch2-next-todo.vercel.app](https://kant-ch2-next-todo.vercel.app)이다. 최초 production 배포는 2026-11-16 23:34:10 KST에 `READY`가 되었다. [배포 상태와 빌드 결과](evidence/production-deployment.json)에 배포 ID, 프로젝트, 커밋, 별칭과 빌드 성공 요약을 기록했다. 최초 배포 커밋은 `d2beb9b5eacfa08083664af899cbc366fc65020d`이며, 아래 화면은 실제 서비스 주소에서 확인한 결과다.
 
-Vercel에는 위 환경변수 두 개를 설정하고, Supabase Site URL은 실제 배포 주소, Redirect URLs는 배포 주소의 /auth/callback으로 맞춘다. 이 저장소의 README 갱신은 Supabase/Vercel 설정이나 실제 배포를 수행하지 않는다.
+Vercel production에는 위의 공개 환경변수 두 개를 설정했다. Supabase 인증 URL은 다음과 같이 저장했고 [설정 화면](evidence/production-auth-url.jpg)을 첨부했다.
+
+| Supabase 설정 | 저장한 값 |
+| --- | --- |
+| Site URL | `https://kant-ch2-next-todo.vercel.app` |
+| Redirect URLs | `https://kant-ch2-next-todo.vercel.app/auth/callback` |
+| Confirm email | 과제용으로 `off`, 확인 메일 미사용 |
+
+### 배포 주소에서 로그인과 수정값 유지
+
+실제 주소에 접속해 [로그인 화면](evidence/production-login.jpg)을 확인했다. 별도 익명 HTTP 요청에서도 `/login`의 `200` 응답과 페이지 제목, 회원가입 전환 버튼을 확인했다. A로 로그인하면 로컬 화면에서 저장했던 [기존 항목 1건](evidence/production-a-list.jpg)이 조회되었다.
+
+기존 A 항목의 제목을 `회원 A 수정과 새로고침 유지 (Vercel)`, 완료 상태를 `false`로 변경하여 저장했다. 같은 상세 페이지를 새로고침한 후에도 제목과 완료 해제 상태가 유지되었다.
+
+![Vercel 실제 서비스에서 수정한 제목과 완료 해제 상태가 새로고침 후 유지되는 결과](evidence/production-a-persisted.jpg)
+
+### 배포 주소에서 신규 등록
+
+A가 `Vercel 신규 등록 검증`을 등록하자 기존 항목과 함께 총 2건이 표시되었다. 새 항목의 ID는 `1a49d5c2-7ec3-4a59-8dc4-c5036a2a7bd9`다.
+
+![Vercel 실제 서비스에서 A의 신규 등록 성공과 본인 항목 2건 확인](evidence/production-create.jpg)
+
+### 배포 주소에서 로그아웃과 회원별 접근 제한
+
+A 로그아웃 후 A의 상세 URL `/todos/e2bec2ba-8ab8-44b0-9033-bd174a9dee15`에 접근하면 `/login`으로 이동했다. [비로그인 접근 결과](evidence/production-logout-redirect.jpg)를 첨부했다.
+
+B로 로그인하면 B의 기존 항목 1건만 조회되며 A의 2건은 표시되지 않았다.
+
+![Vercel 실제 서비스의 B 목록에서 본인 항목 1건만 표시되는 결과](evidence/production-b-isolated.jpg)
+
+B가 같은 A 상세 URL에 직접 접근하면 `할 일이 없거나 접근할 수 없습니다.` 안내가 표시되었다.
+
+![Vercel 실제 서비스에서 B의 A 상세 직접 접근을 거부한 결과](evidence/production-b-denied-a.jpg)
+
+### 배포 화면에서 삭제와 빈 상태 확인
+
+A의 기존 항목을 상세 화면의 삭제 버튼으로 삭제하자 `Vercel 신규 등록 검증` 1건만 남았다.
+
+![Vercel 실제 서비스에서 A의 기존 항목 삭제 후 신규 항목 1건만 남은 결과](evidence/production-a-deleted.jpg)
+
+B도 본인의 항목을 삭제 버튼으로 삭제한 뒤 `아직 할 일이 없습니다.` 빈 목록을 확인했다. B의 [완료 항목 필터 빈 상태](evidence/production-empty-filter.jpg)에서는 `완료한 할 일이 없습니다.` 안내와 전체 보기 버튼을 확인했다.
+
+![Vercel 실제 서비스에서 B의 본인 항목 삭제 후 빈 목록 확인](evidence/production-b-deleted.jpg)
+
+### 일반 가입 API와 새 계정의 배포 로그인
+
+과제 검증용으로 사용자 승인 후 [Confirm email을 끈 설정](evidence/production-signup-setting.jpg)을 저장했다. 이 설정에서는 확인 메일을 사용하지 않는다. 공개 키를 사용하는 공식 Supabase Python 클라이언트의 `auth.sign_up`에 이메일/비밀번호를 전달하여 신규 합성 계정 C 1개를 생성했다.
+
+[일반 가입 API 실행 로그](evidence/production-signup-api.jsonl)에 신규 사용자와 세션 생성, 이메일 확인 상태, local 로그아웃 후 비밀번호 재로그인, `get_user` 확인, C 본인 Todo 생성/조회/수정/삭제와 행 정리 성공을 기록했다. C의 생성은 관리자 API를 사용하지 않았다.
+
+이 계정으로 실제 배포 화면에 로그인하면 할 일 입력창, 로그아웃 버튼, 본인의 빈 목록이 표시되었다. 로그인 확인 후 로그아웃했다. 검증 범위는 일반 가입 API와 새 계정의 배포 로그인이며, 가입 폼에서 새 정보를 입력하고 가입 버튼을 누르는 전체 UI 시연은 아직 수행하지 않았다.
+
+![일반 가입 API로 만든 새 계정이 Vercel 서비스에 로그인하여 본인 빈 목록을 조회한 결과](evidence/production-new-signup-login.jpg)
+
+### 테스트 계정과 데이터 정리
+
+화면 검증을 마친 뒤 기록된 테스트 계정만 정리했다. [A/B 정리 로그](evidence/production-fixture-cleanup.jsonl)와 [C 정리 로그](evidence/production-signup-cleanup.jsonl)를 첨부했다. C는 기록된 ID/이메일/검증용 메타데이터가 원격 계정과 일치하고 Todo가 0건인 것을 확인한 뒤 해당 계정 1개만 삭제했으며, 재조회 `404`로 삭제 완료를 확인했다. 캡처는 정리 전 검증 시점의 데이터이며 계정 비밀번호, 인증키, 세션 토큰은 저장소에 포함하지 않는다.
